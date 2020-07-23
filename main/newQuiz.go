@@ -43,7 +43,7 @@ func main() {
 	a := rand.Perm(len(quiz))
 	a = a[:lim]
 	c := make(chan string)
-	go timeLim(c, 9)
+	go timer(c, 9)
 	for i := 0; i < len(a); i++ {
 		fmt.Printf("%d. %s=", i+1, quiz[a[i]].Question)
 		//fmt.Printf("Answer(): ")
@@ -60,7 +60,7 @@ func main() {
 	fmt.Printf("Right answers: %d out of %d\n", count, len(a))
 }
 
-func timeLim(c chan string, t int) {
+func timer(c chan string, t int) {
 	fmt.Printf(" (%d)", t)
 	time.Sleep(time.Millisecond * 100)
 	for i := 10 * (t - 1); i >= 0; i-- {
