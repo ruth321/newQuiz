@@ -28,22 +28,51 @@ func main() {
 	var answer string
 	var count int
 	var lim int
-	fmt.Printf("Enter number of questions (max %d)\n", len(quiz))
-	fmt.Print("->")
-	_, _ = fmt.Scan(&lim)
+	for {
+		fmt.Printf("Enter number of questions (max %d): ", len(quiz))
+		_, err = fmt.Scan(&lim)
+		if err != nil || lim > len(quiz) || lim < 1 {
+			fmt.Println("Wrong number")
+		} else {
+			break
+		}
+	}
 	a := rand.Perm(len(quiz))
 	a = a[:lim]
-	//c := make(chan string)
-	//go timeLim(c)
+	c := make(chan string)
+	go timeLim(c, 9)
 	for i := 0; i < len(a); i++ {
-		fmt.Print("Question: ")
-		fmt.Println(quiz[a[i]].Question)
-		fmt.Print("Answer: ")
-		_, _ = fmt.Scan(&answer)
-
+		fmt.Printf("%d. %s=", i+1, quiz[a[i]].Question)
+		//fmt.Printf("Answer(): ")
+		go input(c)
+		answer = <-c
+		if answer == "end" {
+			fmt.Println("\nTime is up")
+			break
+		}
 		if answer == quiz[a[i]].Answer {
 			count++
 		}
 	}
 	fmt.Printf("Right answers: %d out of %d\n", count, len(a))
+}
+
+func timeLim(c chan string, t int) {
+	fmt.Printf(" (%d)", t)
+	time.Sleep(time.Millisecond * 100)
+	for i := 10 * (t - 1); i >= 0; i-- {
+		fmt.Print("\b\b\b\b")
+		time.Sleep(time.Millisecond * 100)
+		fmt.Printf(" (%d)", i/10+1)
+	}
+	c <- "end"
+}
+
+func input(c chan string) {
+	var s string
+	_, _ = fmt.Scan(&s)
+	if len(c) != 0 {
+		return
+	}
+	c <- s
 }
