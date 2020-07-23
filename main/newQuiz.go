@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -27,10 +28,12 @@ func main() {
 	_ = json.Unmarshal(file, &quiz)
 	var answer string
 	var count int
+	var limS string
 	var lim int
 	for {
 		fmt.Printf("Enter number of questions (max %d): ", len(quiz))
-		_, err = fmt.Scan(&lim)
+		_, _ = fmt.Scan(&limS)
+		lim, err = strconv.Atoi(limS)
 		if err != nil || lim > len(quiz) || lim < 1 {
 			fmt.Println("Wrong number")
 		} else {
